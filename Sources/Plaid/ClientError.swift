@@ -28,16 +28,16 @@ extension PlaidClientError: Debuggable {
         case .parameterEncodingError(let error):
             let prefix = "Failed to encode parameters"
             if let error = error {
-                return prefix + ": \(error.localizedDescription)"
+                return prefix + ": \(error)"
             } else {
                 return prefix + "."
             }
 
         case .responseDecodingError(let error):
-            return "Failed to decode API response: \(error.localizedDescription)"
+            return "Failed to decode API response: \(error)"
 
         case .errorResponseDecodingError(let error):
-            return "Failed to decode API error response: \(error.localizedDescription)"
+            return "Failed to decode API error response: \(error)"
 
         case .plaidError(let error):
             return "Plaid API Error: \(error)"
