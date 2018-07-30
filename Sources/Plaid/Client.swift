@@ -38,7 +38,7 @@ public final class PlaidClient: Service {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .custom({ keys -> CodingKey in
             let key = keys.last!.stringValue
-            let converted = convertFromSnakeCase(key, uppercasing: ["id"])
+            let converted = convertFromSnakeCase(key, uppercasing: ["id", "mfa"])
             return StringKey(converted)
         })
         return decoder
