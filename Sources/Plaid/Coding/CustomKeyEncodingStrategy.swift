@@ -44,15 +44,17 @@ func convertToSnakeCase(_ stringKey: String, keepingWholeWords wholeWords: Set<S
             let wordRange = upperCaseRange.lowerBound..<lowerCaseRange.upperBound
             let word = String(stringKey[wordRange])
             if wholeWords.contains(word) {
-                // Turn special word into a word, stopping at after the lower case character
-                let afterLowerIndex = stringKey.index(after: lowerCaseRange.lowerBound)
-                words.append(upperCaseRange.lowerBound..<afterLowerIndex)
+                // Turn whole word into a word, stopping at after the lower case character
+                let nextCharacterAfterLowerCase = stringKey.index(after: lowerCaseRange.lowerBound)
+                words.append(upperCaseRange.lowerBound..<nextCharacterAfterLowerCase)
 
-                // Next word starts after the lower case charcter
-                wordStart = afterLowerIndex
-                if let afterWordStart = stringKey.index(wordStart, offsetBy: 1, limitedBy: stringKey.endIndex) {
+                // Adjust the new search range lower bound starting at
+                if let afterWordStart = stringKey.index(nextCharacterAfterLowerCase, offsetBy: 1, limitedBy: stringKey.endIndex) {
                     newSearchRangeLowerBound = afterWordStart
                 }
+
+                // Next word starts after the lower case charcter
+                wordStart = nextCharacterAfterLowerCase
 
             } else {
                 // Turn those into a word, stopping at the capital before the lower case character.

@@ -1,6 +1,7 @@
 import Foundation
 
-// This is the slightly modified (to allow for uppercasing) original code for converting strings from snake case into camel case.
+// This code is  slightly modified from the original (see link) for converting strings from snake case into camel case while providing
+// rules for uppercasing certain words.
 /// https://github.com/apple/swift/blob/fc99de452d7457026a863f5a77f84d72fb45e8c7/stdlib/public/SDK/Foundation/JSONEncoder.swift#L1009
 func convertFromSnakeCase(_ stringKey: String, uppercasing wordsToUppercase: Set<String>) -> String {
     guard !stringKey.isEmpty else { return stringKey }
