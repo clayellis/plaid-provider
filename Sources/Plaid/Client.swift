@@ -1,16 +1,16 @@
 import Vapor
 
-// TODO: Consider making a catchMapToPlaidClientError Future so that any error that comes out of
-// the PlaidClient is always a PlaidClientError
-
 public protocol PlaidResponse: Content {
     var requestID: String { get }
 }
 
-/// Errors thrown by the PlaidClient, not the Plaid API.
+/// Errors thrown by the PlaidClient.
 public enum PlaidClientError: Error {
     case responseMissingData
-    case parameterEncodingError
+    case parameterEncodingError(Error?)
+    case responseDecodingError(Error)
+    case errorResponseDecodingError(Error)
+    case plaidError(PlaidError)
 }
 
 public final class PlaidClient: Service {
@@ -68,7 +68,12 @@ public final class PlaidClient: Service {
 
             switch authentication {
             case .none:
-                try request.content.encode(json: parameters, using: jsonEncoder)
+
+                do {
+                    try request.content.encode(json: parameters, using: jsonEncoder)
+                } catch {
+                    throw PlaidClientError.parameterEncodingError(error)
+                }
 
             case .clientIDSecretPair, .publicKey:
 
@@ -80,7 +85,7 @@ public final class PlaidClient: Service {
                     // Create a dictionary representation of the encoded parameters
                     let encodedObject = try JSONSerialization.jsonObject(with: encodedParameters, options: .mutableContainers)
                     guard var encodedDictionary = encodedObject as? [String: Any] else {
-                        throw PlaidClientError.parameterEncodingError
+                        throw PlaidClientError.parameterEncodingError(nil)
                     }
 
                     // Inject the correct authentication
@@ -103,7 +108,7 @@ public final class PlaidClient: Service {
                     request.http.body = HTTPBody(data: encodedData)
 
                 } catch {
-                    throw PlaidClientError.parameterEncodingError
+                    throw PlaidClientError.parameterEncodingError(error)
                 }
             }
 
@@ -116,9 +121,20 @@ public final class PlaidClient: Service {
 
             switch statusCode {
             case 200, 210:
-                return try self.jsonDecoder.decode(expectedResponse, from: data)
+                do {
+                    return try self.jsonDecoder.decode(expectedResponse, from: data)
+                } catch {
+                    throw PlaidClientError.responseDecodingError(error)
+                }
             default:
-                throw try self.jsonDecoder.decode(PlaidError.self, from: data)
+                let plaidError: PlaidError
+                do {
+                    plaidError = try self.jsonDecoder.decode(PlaidError.self, from: data)
+                } catch {
+                    throw PlaidClientError.errorResponseDecodingError(error)
+                }
+
+                throw PlaidClientError.plaidError(plaidError)
             }
 
             // TODO: Determine what the node client is doing when handling mfa responses
