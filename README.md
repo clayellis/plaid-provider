@@ -15,7 +15,9 @@ This is an experimental Vapor provider for the Plaid API.
 | `/item/access_token/update_version`             | `updateAccessTokenVersion(legacyAccessToken: String)`                                                                                |
 | `/item/remove`                                  | `removeItem(accessToken: String)`                                                                                                    |
 | `/auth/get`                                     | `getAuth(accessToken: String, accountIDs: [String])`                                                                                 |
-| `/transactions/get`                             | ```getTransactions(accessToken: String, startDate: Date, endDate: Date, accountIDs: [String] = [], count: Int = 100, offset: Int = 0)```` |
+| `/transactions/get`                             | ```swift
+getTransactions(accessToken: String, startDate: Date, endDate: Date, accountIDs: [String] = [], count: Int = 100, offset: Int = 0)
+``` |
 | `/transactions/get` (Get All)                   | `getAllTransactions(accessToken: String, startDate: Date, endDate: Date, accountIDs: [String] = [])`                                 |
 | `/accounts/balance/get`                         | `getAccountBalances(accessToken: String, accountIDs: [String])`                                                                      |
 | `/identity/get`                                 | `getIdentity(accessToken: String)`                                                                                                   |
