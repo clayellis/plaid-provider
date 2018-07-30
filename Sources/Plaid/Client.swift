@@ -1,6 +1,6 @@
 import Vapor
 
-public protocol PlaidResponse: Content {
+private protocol PlaidResponse: Content {
     var requestID: String { get }
 }
 
