@@ -128,7 +128,8 @@ public final class PlaidClient: Service {
             default:
                 let plaidError: PlaidError
                 do {
-                    plaidError = try self.jsonDecoder.decode(PlaidError.self, from: data)
+                    let errorDecoder = JSONDecoder()
+                    plaidError = try errorDecoder.decode(PlaidError.self, from: data)
                 } catch {
                     throw PlaidClientError.errorResponseDecodingError(error)
                 }
