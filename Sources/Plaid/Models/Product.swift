@@ -5,4 +5,5 @@ public enum PlaidProduct: String, Codable {
     case identity
     case income
     case assets
+    case creditDetails = "credit_details"
 }
