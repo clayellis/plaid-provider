@@ -434,7 +434,7 @@ extension PlaidClient {
 
     public func getAccountBalances(accessToken: String, accountIDs: [String]) -> Future<GetAccountBalancesResponse> {
         return request(
-            path: "/accounts/get",
+            path: "/accounts/balance/get",
             parameters: AccountParameters(accessToken: accessToken, accountIDs: accountIDs))
     }
 
