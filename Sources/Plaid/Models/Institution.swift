@@ -7,7 +7,6 @@ public struct Institution: Content {
     public let products: [PlaidProduct]
     public let hasMFA: Bool
     public let mfa: [String]
-    public let requestID: String
 
     public struct Credential: Codable {
         public let label: String
