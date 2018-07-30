@@ -4,15 +4,6 @@ private protocol PlaidResponse: Content {
     var requestID: String { get }
 }
 
-/// Errors thrown by the PlaidClient.
-public enum PlaidClientError: Error {
-    case responseMissingData
-    case parameterEncodingError(Error?)
-    case responseDecodingError(Error)
-    case errorResponseDecodingError(Error)
-    case plaidError(PlaidError)
-}
-
 public final class PlaidClient: Service {
     let httpClient: Client
     let config: PlaidConfig

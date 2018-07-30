@@ -32,6 +32,16 @@ extension PlaidError {
     }
 }
 
+extension PlaidError: Debuggable {
+    public var identifier: String {
+        return code
+    }
+
+    public var reason: String {
+        return message
+    }
+}
+
 /*
 
  Error codes:
