@@ -7,7 +7,7 @@ public struct PlaidError: Error, Codable {
     public let code: String
     public let message: String
     public let displayMessage: String?
-    public let httpCode: Int
+    public let httpCode: Int?
     public let requestID: String
 
     private enum CodingKeys: String, CodingKey {
