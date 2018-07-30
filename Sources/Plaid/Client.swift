@@ -26,13 +26,21 @@ public final class PlaidClient: Service {
 
     private lazy var jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
+        encoder.keyEncodingStrategy = .custom({ keys -> CodingKey in
+            let key = keys.last!.stringValue
+            let converted = convertToSnakeCase(key, keepingWholeWords: ["IDs"])
+            return StringKey(converted)
+        })
         return encoder
     }()
 
     private lazy var jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        decoder.keyDecodingStrategy = .custom({ keys -> CodingKey in
+            let key = keys.last!.stringValue
+            let converted = convertFromSnakeCase(key, uppercasing: ["id"])
+            return StringKey(converted)
+        })
         return decoder
     }()
 
