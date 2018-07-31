@@ -10,7 +10,7 @@ This is an experimental Vapor provider for the Plaid API.
 | `/item/public_token/create`                     | `createPublicToken(accessToken: String)`                                                                                             |
 | `/accounts/get`                                 | `getAccounts(accessToken: String)`                                                                                                   |
 | `/item/get`                                     | `getItem(accessToken: String)`                                                                                                       |
-| `/item/webhook/update`                          | `updateItemWebhook(accessToken: String, webhook: URL)`                                                                               |
+| `/item/webhook/update`                          | `updateItemWebhook(accessToken: String, webhook: String)`                                                                            |
 | `/item/access_token/invalidate`                 | `invalidateAccessToken(_ accessToken: String)`                                                                                       |
 | `/item/access_token/update_version`             | `updateAccessTokenVersion(legacyAccessToken: String)`                                                                                |
 | `/item/remove`                                  | `removeItem(accessToken: String)`                                                                                                    |
@@ -28,16 +28,13 @@ This is an experimental Vapor provider for the Plaid API.
 | `/asset_report/audit_copy/remove`               | -                                                                                                                                    |
 | `/institutions/get`                             | `getInstitutions(withProducts products: [PlaidProduct] = [], count: Int = 100, offset: Int = 0)`                                     |
 | `/institutions/get` (Get All)                   | `getAllInstitutions(withProducts products: [PlaidProduct] = [])`                                                                     |
-| `/institutions/get_by_id`                     | `getInstitution(byID institutionID: String)`                                                                                         |
+| `/institutions/get_by_id`                       | `getInstitution(byID institutionID: String)`                                                                                         |
 | `/institutions/search`                          | `getInstitutions(byName query: String, products: [PlaidProduct])`                                                                    |
 | `/categories/get`                               | `getCategories()`                                                                                                                    |
-| *Not Documented*                                |                                                                                                                                      |
-| `/item/create`                                  | `createItem(usingCredentials credentials: Credentials, institutionID: String, initialProducts: Set)`                                 |
-| `/item/mfa`                                     | `answerItemMFA(accessToken: String, mfaType: String, responses: [String])`                                                           |
-| `/item/credentials/update`                      | `updateItemCredentials(accessToken: String, credentials: Credentials)`                                                               |
-| `/processor/stripe/bank_account_token/create` | `createProcessorToken(accessToken: String, accountID: String, processor: PlaidProcessor.stripe)`                                     |
-| `/processor/PROCESSOR/processor_token/create`   | `createProcessorToken(accessToken: String, accountID: String, processor: PlaidProcessor.processor("PROCESSOR")`                      |
-| `/item/delete`                                  | `deleteItem(accessToken: String)`                                                                                                    |
-| `/credit_details/get`                           | `getCreditDetails(accessToken: String)`                                                                                              |
-| `/sandbox/public_token/create`                  | `sandbox_createPublicToken(institutionID: String, initialProducts: [PlaidProduct], webhook: URL?)`                                   |
+| *Sandbox Only*                                  |                                                                                                                                      |
+| `/sandbox/public_token/create`                  | `sandbox_createPublicToken(institutionID: String, initialProducts: [PlaidProduct], webhook: String?)`                                |
 | `/sandbox/item/reset_login`                     | `sanbox_resetItemLogin(accessToken: String)`                                                                                         |
+| *Not Documented*                                |                                                                                                                                      |
+| `/processor/stripe/bank_account_token/create`   | `createProcessorToken(accessToken: String, accountID: String, processor: PlaidProcessor.stripe)`                                     |
+| `/processor/PROCESSOR/processor_token/create`   | `createProcessorToken(accessToken: String, accountID: String, processor: PlaidProcessor.processor("PROCESSOR")`                      |
+| `/credit_details/get`                           | `getCreditDetails(accessToken: String)`                                                                                              |
