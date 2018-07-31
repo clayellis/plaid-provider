@@ -1,6 +1,6 @@
 import Foundation
 
-public enum PlaidEnvironment {
+public enum PlaidEnvironment: String {
     case sandbox
     case development
     case production
