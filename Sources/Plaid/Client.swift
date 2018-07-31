@@ -55,7 +55,6 @@ public final class PlaidClient: Service {
 //        path: String...,
         path: String,
         parameters: Parameters?,
-        includeMFAResponse: Bool = false,
         expectedResponse: Response.Type = Response.self,
         authentication: Authentication = .clientIDSecretPair
     ) -> Future<Response> where Parameters: Content, Response: Content {
@@ -119,7 +118,7 @@ public final class PlaidClient: Service {
             let statusCode = Int(response.http.status.code)
 
             switch statusCode {
-            case 200, 210:
+            case 200:
                 do {
                     return try self.jsonDecoder.decode(expectedResponse, from: data)
                 } catch {
@@ -128,6 +127,7 @@ public final class PlaidClient: Service {
             default:
                 let plaidError: PlaidError
                 do {
+                    // Use an out-of-box JSONDecoder since PlaidError specifies its own coding keys
                     let errorDecoder = JSONDecoder()
                     plaidError = try errorDecoder.decode(PlaidError.self, from: data)
                 } catch {
@@ -136,30 +136,6 @@ public final class PlaidClient: Service {
 
                 throw PlaidClientError.plaidError(plaidError)
             }
-
-            // TODO: Determine what the node client is doing when handling mfa responses
-            // It looks like we should decode the expected response as well as an MFA response
-
-            // TODO: Find out which calls should include the MFA response by default
-            // Maybe those calls should return a response that conforms to PlaidResponse, and MFAResponse
-
-//            switch (includeMFAResponse, statusCode) {
-//            // Success Response (MFA)
-//            case (true, 200):
-//                return try self.jsonDecoder.decode(expectedResponse, from: data)
-//
-//            // MFA Response
-//            case (true, 210):
-//                return try self.jsonDecoder.decode(expectedResponse, from: data)
-//
-//            // Success Response (Non-MFA)
-//            case (false, 200):
-//                return try self.jsonDecoder.decode(expectedResponse, from: data)
-//
-//            // Plaid Error
-//            default:
-//                throw try self.jsonDecoder.decode(PlaidError.self, from: data)
-//            }
         }
     }
 
@@ -206,75 +182,6 @@ extension PlaidClient {
 // MARK: - Requests
 
 extension PlaidClient {
-
-    // MARK: - Create Item (/item/create)
-
-    public struct CreateItemResponse: PlaidResponse {
-        public let publicToken: String
-        public let requestID: String
-    }
-
-    public struct Credentials: Content {
-        public let username: String
-        public let password: String
-
-        public init(username: String, password: String) {
-            self.username = username
-            self.password = password
-        }
-    }
-
-    // TODO: Make an Institution enum where with common fi's and an .id(String) case
-    // and the enum will have a computed instance variable `var id: String`
-    public func createItem(usingCredentials credentials: Credentials, institutionID: String, initialProducts: Set<PlaidProduct>) -> Future<CreateItemResponse> {
-        struct Parameters: Content {
-            let credentials: Credentials
-            let institutionID: String
-            let initialProducts: Set<PlaidProduct>
-        }
-
-        return request(
-            path: "/item/create",
-            parameters: Parameters(credentials: credentials, institutionID: institutionID, initialProducts: initialProducts),
-            includeMFAResponse: true)
-    }
-
-    // MARK: - Answer Item MFA (/item/mfa)
-
-    public struct AnswerItemMFAResponse: PlaidResponse {
-        public let requestID: String
-    }
-
-    public func answerItemMFA(accessToken: String, mfaType: String, responses: [String]) -> Future<AnswerItemMFAResponse> {
-        struct Parameters: Content {
-            let accessToken: String
-            let mfaType: String
-            let responses: [String]
-        }
-
-        return request(
-            path: "/item/mfa",
-            parameters: Parameters(accessToken: accessToken, mfaType: mfaType, responses: responses),
-            includeMFAResponse: true)
-    }
-
-    // MARK: - Update Item Credentials (/item/credentials/update)
-
-    public struct UpdateItemCredentialsResponse: PlaidResponse {
-        public let requestID: String
-    }
-
-    public func updateItemCredentials(accessToken: String, credentials: Credentials) -> Future<UpdateItemCredentialsResponse> {
-        struct Parameters: Content {
-            let accessToken: String
-            let credentials: Credentials
-        }
-
-        return request(
-            path: "/item/credentials/update",
-            parameters: Parameters(accessToken: accessToken, credentials: credentials),
-            includeMFAResponse: true)
-    }
 
     // MARK: - Create Public Token (/item/public_token/create)
 
@@ -375,19 +282,6 @@ extension PlaidClient {
 
     public func invalidateAccessToken(_ accessToken: String) -> Future<InvalidateAccessTokenResponse> {
         return requestWithAccessToken(accessToken, path: "/item/access_token/invalidate")
-    }
-
-    // TODO: The API docs don't list this one, but it's present in the node client, need to verify the response type
-    // MARK: - Delete Item (/item/delete)
-
-    public struct DeleteItemResponse: PlaidResponse {
-        // Just a guess at what the resopnse contains
-        public let deleted: Bool
-        public let requestID: String
-    }
-
-    public func deleteItem(accessToken: String) -> Future<DeleteItemResponse> {
-        return requestWithAccessToken(accessToken, path: "/item/delete")
     }
 
     // MARK: - Remove Item (/item/remove)
@@ -613,17 +507,6 @@ extension PlaidClient {
         }
     }
 
-    // MARK: - Get Credit Details (/credit_details/get)
-
-    // FIXME: I'm not entirely sure what this response actually looks like
-    public struct GetCreditDetailsResponse: PlaidResponse {
-        public let requestID: String
-    }
-
-    public func getCreditDetails(accessToken: String) -> Future<GetCreditDetailsResponse> {
-        return requestWithAccessToken(accessToken, path: "/credit_details/get")
-    }
-
     // TODO: v Finish all of the Asset Report calls later
     // MARK: - Create Asset Report (/asset_report/create)
     // MARK: - Get Asset Report (/asset_report/get)
@@ -782,5 +665,21 @@ extension PlaidClient {
 
     public func sanbox_resetItemLogin(accessToken: String) -> Future<Sandbox_ResetItemLoginResponse> {
         return requestWithAccessToken(accessToken, path: "/sandbox/item/reset_login")
+    }
+}
+
+// MARK: - Undocumented and potentially unsupported
+
+extension PlaidClient {
+
+    // MARK: - Get Credit Details (/credit_details/get)
+
+    // FIXME: I'm not entirely sure what this response actually looks like
+    public struct GetCreditDetailsResponse: PlaidResponse {
+        public let requestID: String
+    }
+
+    public func getCreditDetails(accessToken: String) -> Future<GetCreditDetailsResponse> {
+        return requestWithAccessToken(accessToken, path: "/credit_details/get")
     }
 }
