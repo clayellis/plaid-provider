@@ -330,10 +330,10 @@ extension PlaidClient {
         public let requestID: String
     }
 
-    public func updateItemWebhook(accessToken: String, webhook: URL) -> Future<UpdateItemWebhookResponse> {
+    public func updateItemWebhook(accessToken: String, webhook: String) -> Future<UpdateItemWebhookResponse> {
         struct Parameters: Content {
             let accessToken: String
-            let webhook: URL
+            let webhook: String
         }
 
         return request(
@@ -754,14 +754,14 @@ extension PlaidClient {
         public let requestID: String
     }
 
-    public func sandbox_createPublicToken(institutionID: String, initialProducts: [PlaidProduct], webhook: URL?) -> Future<Sandbox_CreatePublicTokenResponse> {
+    public func sandbox_createPublicToken(institutionID: String, initialProducts: [PlaidProduct], webhook: String?) -> Future<Sandbox_CreatePublicTokenResponse> {
         struct Parameters: Content {
             let institutionID: String
             let initialProducts: [PlaidProduct]
             let options: Options?
 
             struct Options: Codable {
-                let webhook: URL
+                let webhook: String
             }
         }
 

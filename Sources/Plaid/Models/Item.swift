@@ -7,5 +7,5 @@ public struct PlaidItem: Content {
     public let error: String?
     public let institutionID: String
     public let itemID: String
-    public let webhook: URL
+    public let webhook: String
 }
