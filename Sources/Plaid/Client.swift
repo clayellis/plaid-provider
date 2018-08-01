@@ -518,7 +518,7 @@ extension PlaidClient {
     // MARK: - Get Institutions (/institutions/get)
 
     public struct GetInstitutionsResponse: PlaidResponse {
-        public let institutions: [Institution]
+        public let institutions: [PlaidInstitution]
         public let requestID: String
         public let total: Int
     }
@@ -547,16 +547,16 @@ extension PlaidClient {
 
     // MARK: - Get All Institutions
 
-    public func getAllInstitutions(withProducts products: [PlaidProduct] = []) -> Future<[Institution]> {
+    public func getAllInstitutions(withProducts products: [PlaidProduct] = []) -> Future<[PlaidInstitution]> {
         return _getAllInstitutions(withProducts: products)
     }
 
-    private func _getAllInstitutions(withProducts products: [PlaidProduct], institutions: [Institution] = []) -> Future<[Institution]> {
+    private func _getAllInstitutions(withProducts products: [PlaidProduct], institutions: [PlaidInstitution] = []) -> Future<[PlaidInstitution]> {
         return getInstitutions(
             withProducts: products,
             count: 500, // Max allowed
             offset: institutions.count)
-            .flatMap(to: [Institution].self) { response in
+            .flatMap(to: [PlaidInstitution].self) { response in
                 let institutions = institutions + response.institutions
                 if institutions.count >= response.total {
                     // Terminate
@@ -571,7 +571,7 @@ extension PlaidClient {
     // MARK: - Get Institution By ID (/institutions/get_by_id)
 
     public struct GetInstitutionResponse: PlaidResponse {
-        public let institution: Institution
+        public let institution: PlaidInstitution
         public let requestID: String
     }
 
@@ -590,7 +590,7 @@ extension PlaidClient {
     // MARK: - Search Institutions By Name (/institutions/search)
 
     public struct GetInstitutionsSearchResponse: PlaidResponse {
-        public let institutions: [Institution]
+        public let institutions: [PlaidInstitution]
         public let requestID: String
     }
 

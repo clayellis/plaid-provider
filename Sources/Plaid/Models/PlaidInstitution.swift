@@ -1,6 +1,6 @@
 import Vapor
 
-public struct Institution: Content {
+public struct PlaidInstitution: Content {
     public let institutionID: String
     public let name: String
     public let credentials: [Credential]
