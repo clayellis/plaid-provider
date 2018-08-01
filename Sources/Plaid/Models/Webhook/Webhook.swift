@@ -6,7 +6,7 @@ import Vapor
 // never return these types.
 
 /// A generic webhook type that can represent any webhook.
-public struct PlaidWebhook {
+public struct PlaidWebhook: Content {
     public let webhookType: WebhookType
     public let webhookCode: WebhookCode
     public let error: WebhookError?
