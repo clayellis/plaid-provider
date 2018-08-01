@@ -2,14 +2,14 @@ import Vapor
 
 public struct PlaidAccount: Content {
     public let accountID: String
-    public let balances: [Balance]
+    public let balances: Balances
     public let mask: String
     public let name: String
     public let officialName: String
     public let type: AccountType
     public let subtype: String
 
-    public struct Balance: Content {
+    public struct Balances: Content {
         public let available: Int?
         public let current: Int? // TODO: Might not be optional
         public let limit: Int? // TODO: Might not be optional
