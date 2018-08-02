@@ -64,11 +64,16 @@ public final class PlaidClient: Service {
                 return
             }
 
+            /// Represents the body of the request that is safe to log.
+            /// Any injected authentication is stripped.
+            var loggableBody: HTTPBody?
+
             switch authentication {
             case .none:
 
                 do {
                     try request.content.encode(json: parameters, using: jsonEncoder)
+                    loggableBody = request.http.body
                 } catch {
                     throw PlaidClientError.parameterEncodingError(error)
                 }
@@ -79,6 +84,11 @@ public final class PlaidClient: Service {
                 do {
                     // Encode the parameters
                     let encodedParameters = try self.jsonEncoder.encode(parameters)
+
+                    // Set the loggableBody before authentication is injected
+                    if config.clientLoggingOptions.contains(.logRequests) {
+                        loggableBody = HTTPBody(data: encodedParameters)
+                    }
 
                     // Create a dictionary representation of the encoded parameters
                     let encodedObject = try JSONSerialization.jsonObject(with: encodedParameters, options: .mutableContainers)
@@ -110,12 +120,35 @@ public final class PlaidClient: Service {
                 }
             }
 
+            if config.clientLoggingOptions.contains(.logRequests) {
+                let logger = try request.make(Logger.self)
+                var message = ["Outgoing PlaidClient Request:"]
+                message.append(request.http.method.string)
+                message.append(request.http.url.absoluteString)
+
+                if let body = loggableBody {
+                    message.append(body.description)
+                }
+
+                logger.verbose(message.joined(separator: " "))
+            }
+
         }.map { response in
             guard let data = response.http.body.data else {
                 throw PlaidClientError.responseMissingData
             }
 
             let statusCode = Int(response.http.status.code)
+
+            if self.config.clientLoggingOptions.contains(.logResponses) {
+                let logger = try response.make(Logger.self)
+                var message = ["Incoming PlaidClient Response:"]
+                message.append("(\(statusCode))")
+                if let bodyString = data.prettyPrinted() {
+                    message.append("\n" + bodyString)
+                }
+                logger.verbose(message.joined(separator: " "))
+            }
 
             switch statusCode {
             case 200:
