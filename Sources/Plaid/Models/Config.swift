@@ -29,7 +29,7 @@ public struct PlaidConfig: Service {
             self.rawValue = rawValue
         }
 
-        static let logResponses = ClientLoggingOptions(rawValue: 1 << 0)
-        static let logRequests = ClientLoggingOptions(rawValue: 1 << 1)
+        public static let logResponses = ClientLoggingOptions(rawValue: 1 << 0)
+        public static let logRequests = ClientLoggingOptions(rawValue: 1 << 1)
     }
 }
