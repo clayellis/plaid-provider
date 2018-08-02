@@ -8,4 +8,13 @@ public struct PlaidItem: Content {
     public let institutionID: String
     public let itemID: String
     public let webhook: String
+
+    enum CodingKeys: String, CodingKey {
+        case availableProducts = "available_products"
+        case billedProducts = "billed_products"
+        case error
+        case institutionID
+        case itemID
+        case webhook
+    }
 }

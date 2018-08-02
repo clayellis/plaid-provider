@@ -6,7 +6,7 @@ public struct PlaidTransaction: Content {
     public let amount: Float
     // TODO: Make currency code enum with iso, unofficial cases?
     public let isoCurrencyCode: String?
-    public let unofficialCurrentCode: String?
+    public let unofficialCurrencyCode: String?
     public let category: [String]
     public let categoryID: String
     public let date: Date
@@ -18,6 +18,24 @@ public struct PlaidTransaction: Content {
     public let accountOwner: String?
     public let transactionID: String
     public let transactionType: TransactionType
+
+    enum CodingKeys: String, CodingKey {
+        case accountID = "account_id"
+        case amount
+        case isoCurrencyCode = "iso_currency_code"
+        case unofficialCurrencyCode = "unofficial_currency_code"
+        case category
+        case categoryID = "category_id"
+        case date
+        case location
+        case name
+        case paymentMeta = "payment_meta"
+        case pending
+        case pendingTransactionID = "pending_transaction_id"
+        case accountOwner = "account_owner"
+        case transactionID = "transaction_id"
+        case transactionType = "transaction_type"
+    }
 
     public struct Location: Codable {
         public let address: String
@@ -32,6 +50,12 @@ public struct PlaidTransaction: Content {
         public let referenceNumber: String
         public let ppdID: String
         public let payeeName: String?
+
+        enum CodingKeys: String, CodingKey {
+            case referenceNumber = "reference_number"
+            case ppdID
+            case payeeName
+        }
     }
 
     /// See [Transactions](https://plaid.com/docs/api/#transactions)

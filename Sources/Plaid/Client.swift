@@ -26,21 +26,21 @@ public final class PlaidClient: Service {
 
     private lazy var jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .custom({ keys -> CodingKey in
-            let key = keys.last!.stringValue
-            let converted = convertToSnakeCase(key, keepingWholeWords: ["IDs"])
-            return StringKey(converted)
-        })
+//        encoder.keyEncodingStrategy = .custom({ keys -> CodingKey in
+//            let key = keys.last!.stringValue
+//            let converted = convertToSnakeCase(key, keepingWholeWords: ["IDs"])
+//            return StringKey(converted)
+//        })
         return encoder
     }()
 
     private lazy var jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .custom({ keys -> CodingKey in
-            let key = keys.last!.stringValue
-            let converted = convertFromSnakeCase(key, uppercasing: ["id", "mfa"])
-            return StringKey(converted)
-        })
+//        decoder.keyDecodingStrategy = .custom({ keys -> CodingKey in
+//            let key = keys.last!.stringValue
+//            let converted = convertFromSnakeCase(key, uppercasing: ["id", "mfa"])
+//            return StringKey(converted)
+//        })
         return decoder
     }()
 
@@ -155,6 +155,10 @@ public final class PlaidClient: Service {
 extension PlaidClient {
     private struct AccessTokenParameters: Content {
         let accessToken: String
+
+        enum CodingKeys: String, CodingKey {
+            case accessToken = "access_token"
+        }
     }
 
     /// Used when a parameter type is required, but the parameters are nil.
@@ -170,6 +174,15 @@ extension PlaidClient {
 
         struct Options: Codable {
             let accountIDs: [String]
+
+            enum CodingKeys: String, CodingKey {
+                case accountIDs = "account_ids"
+            }
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case accessToken = "access_token"
+            case options
         }
 
         init(accessToken: String, accountIDs: [String]) {
@@ -188,6 +201,11 @@ extension PlaidClient {
     public struct CreatePublicTokenResponse: PlaidResponse {
         public let publicToken: String
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case publicToken = "public_token"
+            case requestID = "request_id"
+        }
     }
 
     public func createPublicToken(accessToken: String) -> Future<CreatePublicTokenResponse> {
@@ -200,11 +218,21 @@ extension PlaidClient {
         public let accessToken: String
         public let itemID: String
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case accessToken = "access_token"
+            case itemID = "item_id"
+            case requestID = "request_id"
+        }
     }
 
     public func exchangePublicToken(_ publicToken: String) -> Future<ExchangePublicTokenResponse> {
         struct Parameters: Content {
             let publicToken: String
+
+            enum CodingKeys: String, CodingKey {
+                case publicToken = "public_token"
+            }
         }
 
         return request(
@@ -218,11 +246,21 @@ extension PlaidClient {
         public let accessToken: String
         public let itemID: String
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case accessToken = "access_token"
+            case itemID = "item_id"
+            case requestID = "request_id"
+        }
     }
 
     public func updateAccessTokenVersion(legacyAccessToken: String) -> Future<UpdateAccessTokenVersionResponse> {
         struct Parameters: Content {
             let accessTokenV1: String
+
+            enum CodingKeys: String, CodingKey {
+                case accessTokenV1 = "access_token_v1"
+            }
         }
 
         return request(
@@ -235,12 +273,22 @@ extension PlaidClient {
     public struct UpdateItemWebhookResponse: PlaidResponse {
         public let item: PlaidItem
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case item
+            case requestID = "request_id"
+        }
     }
 
     public func updateItemWebhook(accessToken: String, webhook: String) -> Future<UpdateItemWebhookResponse> {
         struct Parameters: Content {
             let accessToken: String
             let webhook: String
+
+            enum CodingKeys: String, CodingKey {
+                case accessToken = "access_token"
+                case webhook
+            }
         }
 
         return request(
@@ -252,12 +300,21 @@ extension PlaidClient {
 
     public struct CreateProcessorTokenResponse: PlaidResponse {
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case requestID = "request_id"
+        }
     }
 
     public func createProcessorToken(accessToken: String, accountID: String, processor: PlaidProcessor) -> Future<CreateProcessorTokenResponse> {
         struct Parameters: Content {
             let accessToken: String
             let accountID: String
+
+            enum CodingKeys: String, CodingKey {
+                case accessToken = "access_token"
+                case accountID = "account_id"
+            }
         }
 
         let endpoint: String
@@ -278,6 +335,11 @@ extension PlaidClient {
     public struct InvalidateAccessTokenResponse: PlaidResponse {
         public let newAccessToken: String
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case newAccessToken = "new_access_token"
+            case requestID = "request_id"
+        }
     }
 
     public func invalidateAccessToken(_ accessToken: String) -> Future<InvalidateAccessTokenResponse> {
@@ -289,6 +351,11 @@ extension PlaidClient {
     public struct RemoveItemResponse: PlaidResponse {
         public let removed: Bool
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case removed
+            case requestID = "request_id"
+        }
     }
 
     public func removeItem(accessToken: String) -> Future<RemoveItemResponse> {
@@ -300,6 +367,11 @@ extension PlaidClient {
     public struct GetItemResponse: PlaidResponse {
         public let item: PlaidItem
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case item
+            case requestID = "request_id"
+        }
     }
 
     public func getItem(accessToken: String) -> Future<GetItemResponse> {
@@ -313,6 +385,12 @@ extension PlaidClient {
         public let accounts: [PlaidAccount]
         public let item: PlaidItem
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case accounts
+            case item
+            case requestID = "request_id"
+        }
     }
 
     public func getAccounts(accessToken: String) -> Future<GetAccountsResponse> {
@@ -325,6 +403,12 @@ extension PlaidClient {
         public let accounts: [PlaidAccount]
         public let item: PlaidItem
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case accounts
+            case item
+            case requestID = "request_id"
+        }
     }
 
     public func getAccountBalances(accessToken: String, accountIDs: [String]) -> Future<GetAccountBalancesResponse> {
@@ -341,6 +425,13 @@ extension PlaidClient {
         public let item: PlaidItem
         public let requestID: String
 
+        enum CodingKeys: String, CodingKey {
+            case accounts
+            case numbers
+            case item
+            case requestID = "request_id"
+        }
+
         public struct Numbers: Codable {
             public let ach: [ACH]
             public let etf: [ETF]
@@ -350,6 +441,13 @@ extension PlaidClient {
                 public let accountID: String
                 public let routing: String
                 public let wireRouting: String
+
+                enum CodingKeys: String, CodingKey {
+                    case account
+                    case accountID = "account_id"
+                    case routing
+                    case wireRouting = "wire_routing"
+                }
             }
 
             public struct ETF: Content {
@@ -357,6 +455,13 @@ extension PlaidClient {
                 public let accountID: String
                 public let institution: String
                 public let branch: String
+
+                enum CodingKeys: String, CodingKey {
+                    case account
+                    case accountID = "account_id"
+                    case institution
+                    case branch
+                }
             }
         }
     }
@@ -375,11 +480,25 @@ extension PlaidClient {
         public let item: PlaidItem
         public let requestID: String
 
+        enum CodingKeys: String, CodingKey {
+            case accounts
+            case identity
+            case item
+            case requestID = "request_id"
+        }
+
         public struct Identity: Codable {
             public let addresses: [Address]
             public let emails: [Email]
             public let names: [String]
             public let phoneNumbers: [PhoneNumber]
+
+            enum CodingKeys: String, CodingKey {
+                case addresses
+                case emails
+                case names
+                case phoneNumbers = "phone_numbers"
+            }
 
             public struct Address: Codable {
                 public let accounts: [String]
@@ -418,6 +537,11 @@ extension PlaidClient {
         public let income: Income
         public let requestID: String
 
+        enum CodingKeys: String, CodingKey {
+            case income
+            case requestID = "request_id"
+        }
+
         public struct Income: Codable {
             public let incomeStreams: [IncomeStream]
             public let lastYearIncome: Int
@@ -427,11 +551,28 @@ extension PlaidClient {
             public let maxNumberOfOverlappingIncomeStreams: Int
             public let numberOfIncomeStreams: Int
 
+            enum CodingKeys: String, CodingKey {
+                case incomeStreams = "income_streams"
+                case lastYearIncome = "last_year_income"
+                case lastYearIncomeBeforeTax = "last_year_income_before_tax"
+                case projectedYearlyIncome = "projected_yearly_income"
+                case projectedYearlyIncomeBeforeTax = "projected_yearly_income_before_tax"
+                case maxNumberOfOverlappingIncomeStreams = "max_number_of_overlapping_income_streams"
+                case numberOfIncomeStreams = "number_of_income_streams"
+            }
+
             public struct IncomeStream: Codable {
                 public let confidence: Float
                 public let days: Int
                 public let monthlyIncome: Int
                 public let name: String
+
+                enum CodingKeys: String, CodingKey {
+                    case confidence
+                    case days
+                    case monthlyIncome = "monthly_income"
+                    case name
+                }
             }
         }
     }
@@ -448,6 +589,14 @@ extension PlaidClient {
         public let item: PlaidItem
         public let totalTransactions: Int
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case accounts
+            case transactions
+            case item
+            case totalTransactions = "total_transactions"
+            case requestID = "request_id"
+        }
     }
 
     /// - parameter count: The number of transactions to fetch, where 0 < `count` <= 500. Default = 100.
@@ -458,10 +607,22 @@ extension PlaidClient {
             let endDate: Date
             let options: Options?
 
+            enum CodingKeys: String, CodingKey {
+                case startDate = "start_date"
+                case endDate = "end_date"
+                case options
+            }
+
             struct Options: Codable {
                 let accountIDs: [String]?
                 let count: Int
                 let offset: Int
+
+                enum CodingKeys: String, CodingKey {
+                    case accountIDs = "account_ids"
+                    case count
+                    case offset
+                }
 
                 init(accountIDs: [String], count: Int, offset: Int) {
                     self.accountIDs = accountIDs.isEmpty ? nil : accountIDs
@@ -519,8 +680,14 @@ extension PlaidClient {
 
     public struct GetInstitutionsResponse: PlaidResponse {
         public let institutions: [PlaidInstitution]
-        public let requestID: String
         public let total: Int
+        public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case institutions
+            case total
+            case requestID = "request_id"
+        }
     }
 
     /// - parameter count: The number of institutions to fetch, where 0 < `count` <= 500. Default = 100.
@@ -573,12 +740,21 @@ extension PlaidClient {
     public struct GetInstitutionResponse: PlaidResponse {
         public let institution: PlaidInstitution
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case institution
+            case requestID = "request_id"
+        }
     }
 
     public func getInstitution(byID institutionID: String) -> Future<GetInstitutionResponse> {
         struct Parameters: Content {
             let institutionID: String
             // TODO: There is options object, but no information on what it contains
+
+            enum CodingKeys: String, CodingKey {
+                case institutionID = "institution_id"
+            }
         }
 
         return request(
@@ -592,6 +768,11 @@ extension PlaidClient {
     public struct GetInstitutionsSearchResponse: PlaidResponse {
         public let institutions: [PlaidInstitution]
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case institutions
+            case requestID = "request_id"
+        }
     }
 
     public func getInstitutions(byName query: String, products: [PlaidProduct]) -> Future<GetInstitutionsSearchResponse> {
@@ -613,10 +794,21 @@ extension PlaidClient {
         public let categories: [Category]
         public let requestID: String
 
+        enum CodingKeys: String, CodingKey {
+            case categories
+            case requestID = "request_id"
+        }
+
         public struct Category: Codable {
             public let group: String
             public let hierarchy: [String]
             public let categoryID: String
+
+            enum CodingKeys: String, CodingKey {
+                case group
+                case hierarchy
+                case categoryID = "category_id"
+            }
         }
     }
 
@@ -635,6 +827,11 @@ extension PlaidClient {
     public struct Sandbox_CreatePublicTokenResponse: PlaidResponse {
         public let publicToken: String
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case publicToken = "public_token"
+            case requestID = "request_id"
+        }
     }
 
     public func sandbox_createPublicToken(institutionID: String, initialProducts: [PlaidProduct], webhook: String?) -> Future<Sandbox_CreatePublicTokenResponse> {
@@ -642,6 +839,12 @@ extension PlaidClient {
             let institutionID: String
             let initialProducts: [PlaidProduct]
             let options: Options?
+
+            enum CodingKeys: String, CodingKey {
+                case institutionID = "institution_id"
+                case initialProducts = "initial_products"
+                case options
+            }
 
             struct Options: Codable {
                 let webhook: String
@@ -661,6 +864,11 @@ extension PlaidClient {
     public struct Sandbox_ResetItemLoginResponse: PlaidResponse {
         public let resetLogin: Bool
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case resetLogin = "reset_login"
+            case requestID = "request_id"
+        }
     }
 
     public func sanbox_resetItemLogin(accessToken: String) -> Future<Sandbox_ResetItemLoginResponse> {
@@ -677,6 +885,10 @@ extension PlaidClient {
     // FIXME: I'm not entirely sure what this response actually looks like
     public struct GetCreditDetailsResponse: PlaidResponse {
         public let requestID: String
+
+        enum CodingKeys: String, CodingKey {
+            case requestID = "request_id"
+        }
     }
 
     public func getCreditDetails(accessToken: String) -> Future<GetCreditDetailsResponse> {
