@@ -13,8 +13,8 @@ public struct PlaidItem: Content {
         case availableProducts = "available_products"
         case billedProducts = "billed_products"
         case error
-        case institutionID
-        case itemID
+        case institutionID = "institution_id"
+        case itemID = "item_id"
         case webhook
     }
 }
