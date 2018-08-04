@@ -636,11 +636,13 @@ extension PlaidClient {
     /// - parameter offset: The number of transactions to skip, where `offset` >= 0. Default = 0.
     public func getTransactions(accessToken: String, startDate: Date, endDate: Date, accountIDs: [String] = [], count: Int = 100, offset: Int = 0) -> Future<GetTransactionsResponse> {
         struct Parameters: Content {
+            let accessToken: String
             let startDate: Date
             let endDate: Date
             let options: Options?
 
             enum CodingKeys: String, CodingKey {
+                case accessToken = "access_token"
                 case startDate = "start_date"
                 case endDate = "end_date"
                 case options
@@ -666,6 +668,7 @@ extension PlaidClient {
         }
 
         let parameters = Parameters(
+            accessToken: accessToken,
             startDate: startDate,
             endDate: endDate,
             options: .init(accountIDs: accountIDs, count: count, offset: offset))
