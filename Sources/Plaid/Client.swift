@@ -26,7 +26,7 @@ public final class PlaidClient: Service {
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-mm-dd"
+        formatter.dateFormat = "YYYY-MM-DD"
         return formatter
     }()
 
