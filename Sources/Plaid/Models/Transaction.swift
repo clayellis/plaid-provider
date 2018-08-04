@@ -38,24 +38,44 @@ public struct PlaidTransaction: Content {
     }
 
     public struct Location: Codable {
-        public let address: String
-        public let city: String
-        public let state: String
-        public let zip: String
+        public let address: String?
+        public let city: String?
+        public let state: String?
+        public let zip: String?
         public let lat: Float?
         public let lon: Float?
     }
 
     public struct Payment: Codable {
-        public let referenceNumber: String
-        public let ppdID: String
-        public let payeeName: String?
+        public let ppdID: String?
+        public let reason: String?
+        public let paymentProcessor: String?
+        public let referenceNumber: String?
+        public let byOrderOf: String?
+        public let payee: String?
+//        public let payeeName: String?
+        public let payer: String?
+        public let paymentMethod: String?
 
         enum CodingKeys: String, CodingKey {
-            case referenceNumber = "reference_number"
             case ppdID
-            case payeeName
+            case reason
+            case paymentProcessor = "payment_processor"
+            case referenceNumber = "reference_number"
+            case byOrderOf = "by_order_of"
+            case payee
+//            case payeeName
+            case payer
+            case paymentMethod = "payment_method"
         }
+//        "ppd_id" : null,
+//        "reason" : null,
+//        "payment_processor" : null,
+//        "reference_number" : null,
+//        "by_order_of" : null,
+//        "payee" : null,
+//        "payer" : null,
+//        "payment_method" : null
     }
 
     /// See [Transactions](https://plaid.com/docs/api/#transactions)
