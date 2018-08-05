@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Plaid",
+    name: "PlaidProvider",
     products: [
         .library(
             name: "Plaid",
