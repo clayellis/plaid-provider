@@ -24,11 +24,11 @@ public final class PlaidClient: Service {
         return headers
     }()
 
-//    private lazy var dateFormatter: DateFormatter = {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "yyyy-MM-dd"
-//        return formatter
-//    }()
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 
     private lazy var jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -43,7 +43,7 @@ public final class PlaidClient: Service {
 
     private lazy var jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
-//        decoder.dateDecodingStrategy = .formatted(dateFormatter)
+        decoder.dateDecodingStrategy = .formatted(dateFormatter)
 //        decoder.keyDecodingStrategy = .custom({ keys -> CodingKey in
 //            let key = keys.last!.stringValue
 //            let converted = convertFromSnakeCase(key, uppercasing: ["id", "mfa"])
