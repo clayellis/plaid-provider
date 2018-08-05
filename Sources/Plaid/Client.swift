@@ -24,15 +24,15 @@ public final class PlaidClient: Service {
         return headers
     }()
 
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
+//    private lazy var dateFormatter: DateFormatter = {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "yyyy-MM-dd"
+//        return formatter
+//    }()
 
     private lazy var jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(dateFormatter)
+//        encoder.dateEncodingStrategy = .formatted(dateFormatter)
 //        encoder.keyEncodingStrategy = .custom({ keys -> CodingKey in
 //            let key = keys.last!.stringValue
 //            let converted = convertToSnakeCase(key, keepingWholeWords: ["IDs"])
@@ -43,7 +43,7 @@ public final class PlaidClient: Service {
 
     private lazy var jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
+//        decoder.dateDecodingStrategy = .formatted(dateFormatter)
 //        decoder.keyDecodingStrategy = .custom({ keys -> CodingKey in
 //            let key = keys.last!.stringValue
 //            let converted = convertFromSnakeCase(key, uppercasing: ["id", "mfa"])
@@ -640,13 +640,15 @@ extension PlaidClient {
         }
     }
 
+    /// - parameter startDate: The starting date of the range. Format: "YYYY-MM-DD"
+    /// - parameter endDate: The ending date of the range. Format: "YYYY-MM-DD"
     /// - parameter count: The number of transactions to fetch, where 0 < `count` <= 500. Default = 100.
     /// - parameter offset: The number of transactions to skip, where `offset` >= 0. Default = 0.
-    public func getTransactions(accessToken: String, startDate: Date, endDate: Date, accountIDs: [String] = [], count: Int = 100, offset: Int = 0) -> Future<GetTransactionsResponse> {
+    public func getTransactions(accessToken: String, startDate: String, endDate: String, accountIDs: [String] = [], count: Int = 100, offset: Int = 0) -> Future<GetTransactionsResponse> {
         struct Parameters: Content {
             let accessToken: String
-            let startDate: Date
-            let endDate: Date
+            let startDate: String
+            let endDate: String
             let options: Options?
 
             enum CodingKeys: String, CodingKey {
@@ -686,13 +688,15 @@ extension PlaidClient {
 
     // MARK: - Get All Transactions
 
+    /// - parameter startDate: The starting date of the range. Format: "YYYY-MM-DD"
+    /// - parameter endDate: The ending date of the range. Format: "YYYY-MM-DD"
     /// - parameter count: The number of transactions to fetch, where 0 < `count` <= 500. Default = 100.
     /// - parameter offset: The number of transactions to skip, where `offset` >= 0. Default = 0.
-    public func getAllTransactions(accessToken: String, startDate: Date, endDate: Date, accountIDs: [String] = []) -> Future<[PlaidTransaction]> {
+    public func getAllTransactions(accessToken: String, startDate: String, endDate: String, accountIDs: [String] = []) -> Future<[PlaidTransaction]> {
         return _getAllTransactions(accessToken: accessToken, startDate: startDate, endDate: endDate, accountIDs: accountIDs)
     }
 
-    private func _getAllTransactions(accessToken: String, startDate: Date, endDate: Date, accountIDs: [String], transactions: [PlaidTransaction] = []) -> Future<[PlaidTransaction]> {
+    private func _getAllTransactions(accessToken: String, startDate: String, endDate: String, accountIDs: [String], transactions: [PlaidTransaction] = []) -> Future<[PlaidTransaction]> {
         return getTransactions(
             accessToken: accessToken,
             startDate: startDate,
